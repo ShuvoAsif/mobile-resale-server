@@ -27,12 +27,22 @@ async function run() {
         const mobileCollection = client.db('mobileResale').collection('mobiles');
         const categoryCollection = client.db('mobileResale').collection('categories');
 
+        app.get('/catmobiles/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {};
+            const mobiles = await mobileCollection.find(query).toArray();
+            const selectedMobiles = mobiles.filter(n => n.category_id === id);
+            res.send(selectedMobiles);
+
+        });
+
         app.get('/mobiles', async (req, res) => {
             const query = {};
             const mobiles = await mobileCollection.find(query).toArray();
             res.send(mobiles);
 
         });
+
 
         app.get('/categories', async (req, res) => {
             const query = {};
