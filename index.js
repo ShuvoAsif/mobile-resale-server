@@ -31,7 +31,7 @@ async function run() {
             const id = req.params.id;
             const query = {};
             const mobiles = await mobileCollection.find(query).toArray();
-            const selectedMobiles = mobiles.filter(n => n.category_id === id);
+            const selectedMobiles = mobiles.filter(n => n.category_id === id && n.is_sold === false);
             res.send(selectedMobiles);
 
         });
@@ -40,6 +40,13 @@ async function run() {
             const query = {};
             const mobiles = await mobileCollection.find(query).toArray();
             res.send(mobiles);
+        });
+
+        app.get('/addmobiles', async (req, res) => {
+            const query = {};
+            const mobiles = await mobileCollection.find(query).toArray();
+            const addvertiseMobiles = mobiles.filter(n => n.is_add === true && n.is_sold === false);
+            res.send(addvertiseMobiles);
 
         });
 
