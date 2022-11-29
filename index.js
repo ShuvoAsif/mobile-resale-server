@@ -107,6 +107,13 @@ async function run() {
             res.send(buyers);
         });
 
+        app.get('/sellers', async (req, res) => {
+            const query = {};
+            const users = await usersCollection.find(query).toArray();
+            const sellers = users.filter(n => n.role === "seller");
+            res.send(sellers);
+        });
+
 
     }
     finally {
