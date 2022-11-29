@@ -100,6 +100,14 @@ async function run() {
 
 
 
+        app.get('/buyers', async (req, res) => {
+            const query = {};
+            const users = await usersCollection.find(query).toArray();
+            const buyers = users.filter(n => n.role === "buyer");
+            res.send(buyers);
+        });
+
+
     }
     finally {
 
