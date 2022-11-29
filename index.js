@@ -3,7 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 
@@ -45,6 +45,18 @@ async function run() {
         const mobileCollection = client.db('mobileResale').collection('mobiles');
         const categoryCollection = client.db('mobileResale').collection('categories');
         const usersCollection = client.db('mobileResale').collection('users');
+
+
+        const verifyAdmin = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        }
 
 
 
@@ -113,6 +125,19 @@ async function run() {
             const sellers = users.filter(n => n.role === "seller");
             res.send(sellers);
         });
+
+
+
+        app.delete('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+
+
 
 
     }
