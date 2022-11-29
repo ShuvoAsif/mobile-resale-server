@@ -136,8 +136,28 @@ async function run() {
         })
 
 
+        app.put('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    verify: true
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
 
 
+
+
+        app.get('/userinfo', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const userinfo = await usersCollection.findOne(query);
+            res.send(userinfo);
+        });
 
 
     }
