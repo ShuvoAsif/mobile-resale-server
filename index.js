@@ -81,13 +81,21 @@ async function run() {
 
         });
 
+        app.get('/reporteditems', async (req, res) => {
+            const query = {};
+            const mobiles = await mobileCollection.find(query).toArray();
+            const reportedMobiles = mobiles.filter(n => n.reported === true);
+            res.send(reportedMobiles);
+
+        });
+
         app.get('/mobiles', async (req, res) => {
             const query = {};
             const mobiles = await mobileCollection.find(query).toArray();
             res.send(mobiles);
         });
 
-        app.get('/addmobiles', async (req, res) => {
+        app.get('/advertisemobiles', async (req, res) => {
             const query = {};
             const mobiles = await mobileCollection.find(query).toArray();
             const addvertiseMobiles = mobiles.filter(n => n.is_add === true && n.is_sold === false);
@@ -142,6 +150,20 @@ async function run() {
             res.send(result);
         })
 
+        app.delete('/myproduct/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await mobileCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/reportedproduct/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await mobileCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
         app.put('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
@@ -164,6 +186,13 @@ async function run() {
             const query = { email: email };
             const userinfo = await usersCollection.findOne(query);
             res.send(userinfo);
+        });
+
+        app.get('/myproducts', async (req, res) => {
+            const email = req.query.email;
+            const query = { seller_mail: email };
+            const mobiles = await mobileCollection.find(query).toArray();
+            res.send(mobiles);
         });
 
 
