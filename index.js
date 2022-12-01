@@ -45,6 +45,7 @@ async function run() {
         const mobileCollection = client.db('mobileResale').collection('mobiles');
         const categoryCollection = client.db('mobileResale').collection('categories');
         const usersCollection = client.db('mobileResale').collection('users');
+        const bookingCollection = client.db('mobileResale').collection('booking');
 
 
         const verifyAdmin = async (req, res, next) => {
@@ -110,11 +111,24 @@ async function run() {
             res.send(categories);
         })
 
+        app.get('/booking', async (req, res) => {
+            const query = {};
+            const bookings = await bookingCollection.find(query).toArray();
+            res.send(bookings);
+        })
+
 
         app.post('/users', async (req, res) => {
             const user = req.body;
             console.log(user);
             const result = await usersCollection.insertOne(user);
+            res.send(result);
+        });
+
+        app.post('/booking', async (req, res) => {
+            const bookitem = req.body;
+            console.log(bookitem);
+            const result = await bookingCollection.insertOne(bookitem);
             res.send(result);
         });
 
@@ -150,7 +164,14 @@ async function run() {
             res.send(result);
         })
 
-        app.delete('/myproduct/:id', verifyJWT, verifyAdmin, async (req, res) => {
+        app.delete('/booking/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await bookingCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/myproduct/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await mobileCollection.deleteOne(query);
