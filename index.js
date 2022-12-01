@@ -110,6 +110,13 @@ async function run() {
             res.send(result);
         });
 
+        app.post('/addmobiles', async (req, res) => {
+            const mobile = req.body;
+            console.log(mobile);
+            const result = await mobileCollection.insertOne(mobile);
+            res.send(result);
+        });
+
 
 
         app.get('/buyers', async (req, res) => {
