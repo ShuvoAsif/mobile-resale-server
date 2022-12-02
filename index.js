@@ -64,6 +64,14 @@ async function run() {
 
 
 
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
+
+
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -115,7 +123,8 @@ async function run() {
         })
 
         app.get('/booking', async (req, res) => {
-            const query = {};
+            const email = req.query.email;
+            const query = { email: email };
             const bookings = await bookingCollection.find(query).toArray();
             res.send(bookings);
         })
@@ -185,6 +194,12 @@ async function run() {
             res.send(buyers);
         });
 
+        app.get('/allusers', async (req, res) => {
+            const query = {};
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        });
+
         app.get('/sellers', async (req, res) => {
             const query = {};
             const users = await usersCollection.find(query).toArray();
@@ -198,6 +213,14 @@ async function run() {
             const query = { productid: id };
             const booking = await bookingCollection.findOne(query);
             res.send(booking);
+        })
+
+        app.get('/oneuser', async (req, res) => {
+            const mail = req.query.email;
+            const query = {};
+            const users = await usersCollection.find(query).toArray();
+            const user = users.filter(n => n.email === mail);
+            res.send(user);
         })
 
         app.delete('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
